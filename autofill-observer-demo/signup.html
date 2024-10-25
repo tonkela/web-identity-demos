@@ -1,0 +1,101 @@
+<!-- Copyright 2024 Google LLC
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License. -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Autofill observer</title>
+    <link rel="stylesheet" href="./style.css" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🔎</text></svg>"
+    />
+  </head>
+  <body>
+    <main>
+      <div class="demo-metadata">
+        <div>Autofill observer demo 🔎</div>
+        <div>
+          <a
+            href="https://chrome.dev/web-identity-demos/autofill-observer-demo/script.js"
+            noreferrer
+            noopener
+            target="_blank"
+            >Source script</a
+          >
+          •
+          <a
+            href="https://github.com/GoogleChromeLabs/autofill-observer"
+            noreferrer
+            noopener
+            >Docs</a
+          >
+          • By
+          <a href="https://x.com/maudnals" noreferrer noopener>@maudnals</a>
+        </div>
+      </div>
+      <nav>
+        <ul>
+          <li>
+            <a href="./index.html">🏠 Home</a>
+          </li>
+          <li>
+            <a href="./address.html">Address</a>
+          </li>
+          <li>
+            <a href="./signup.html">Sign up</a>
+          </li>
+          <li>
+            <a href="./signin.html">Sign in</a>
+          </li>
+        </ul>
+      </nav>
+      <h1>Sign up</h1>
+      <div class="data-warning">
+        This demo does not store or send any data to a server.
+      </div>
+      <form id="form" onsubmit="return submitForm(event)">
+        <div>
+          <label for="email">Email</label>
+          <input
+            autocomplete="email"
+            required
+            type="email"
+            id="email"
+            name="email"
+          />
+        </div>
+        <div>
+          <label for="password">Password</label>
+          <input
+            autocomplete="new-password"
+            type="password"
+            id="password"
+            name="password"
+          />
+        </div>
+        <button type="submit">Check</button>
+      </form>
+      <div class="autofill-info-wrapper">
+        <h2>Autofill info</h2>
+        <div id="autofillInfo">
+          To see autofill info, fill the fields and click the button.
+        </div>
+      </div>
+    </main>
+    <script type="module" src="./script.js"></script>
+  </body>
+</html>
