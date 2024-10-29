@@ -32,7 +32,7 @@ This demo relies on the following snippet (by [@battre](https://github.com/battr
 
 ```javascript
 // Get all elements that are autofilled using the :autofill pseudo-class
-const allAutofilledElements = document.querySelectorAll(':is(:autofill)');
+const allAutofilledElements = document.querySelectorAll(':autofill');
 // Check if the passed element is in the list of autofilled elements
 const isAutofilled = Array.from(allAutofilledElements).includes(element);
 ```

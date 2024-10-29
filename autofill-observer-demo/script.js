@@ -43,7 +43,7 @@ function initializeChangeObserver(formEl) {
 
 function getAllAutofilledFields(formEl) {
   // Get all elements that are autofilled, using the :autofill pseudo-class
-  return formEl.querySelectorAll(':is(:autofill)');
+  return formEl.querySelectorAll(':autofill');
 }
 
 function checkIsAutofilled(formEl, fieldEl) {
