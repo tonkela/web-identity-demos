@@ -27,7 +27,7 @@ const autofillStatuses = {};
 //     "country": "autofilled-then-fixed"
 // }
 
-function initializeAutofillObserver(formEl) {
+function initializeChangeObserver(formEl) {
   const allFieldsAsArray = Array.from(formEl.querySelectorAll('input, select'));
   // Intialize autofill status for all fields
   allFieldsAsArray.forEach((fieldEl) => {
@@ -95,6 +95,6 @@ function submitForm(e) {
 
 // ------------------------- MAIN ---------------------- //
 
-initializeAutofillObserver(document.getElementById('form'));
+initializeChangeObserver(document.getElementById('form'));
 
 window.submitForm = submitForm;
