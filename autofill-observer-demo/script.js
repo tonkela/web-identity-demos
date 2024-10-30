@@ -27,6 +27,7 @@ const autofillStatuses = {};
 //     "country": "autofilled-then-fixed"
 // }
 
+// Update autofill status
 function initializeChangeObserver(formEl) {
   const allFieldsAsArray = Array.from(formEl.querySelectorAll('input, select'));
   // Intialize autofill status for all fields
@@ -41,19 +42,19 @@ function initializeChangeObserver(formEl) {
   });
 }
 
+// Get all elements that are autofilled, using the :autofill pseudo-class
 function getAllAutofilledFields(formEl) {
-  // Get all elements that are autofilled, using the :autofill pseudo-class
   return formEl.querySelectorAll(':autofill');
 }
 
-function checkIsAutofilled(formEl, fieldEl) {
-  const allAutofilledElements = getAllAutofilledFields(formEl);
-  // Check if the passed element is in the list of autofilled elements
-  return Array.from(allAutofilledElements).includes(fieldEl);
+// Check if the passed element is in the list of autofilled fields
+function checkIsAutofilled(allAutofilledFields, fieldEl) {
+  return Array.from(allAutofilledFields).includes(fieldEl);
 }
 
 function updateAutofillStatus(formEl, fieldEl) {
-  const isAutofilled = checkIsAutofilled(formEl, fieldEl);
+  const allAutofilledFields = getAllAutofilledFields(formEl);
+  const isAutofilled = checkIsAutofilled(allAutofilledFields, fieldEl);
   const previousAutofillStatus = autofillStatuses[fieldEl.id];
   if (isAutofilled) {
     autofillStatuses[fieldEl.id] = AUTOFILLED;
