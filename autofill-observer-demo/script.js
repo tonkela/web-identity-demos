@@ -17,55 +17,57 @@
 // Possible values for autofill statuses
 const AUTOFILLED = 'autofilled';
 const NEVER_AUTOFILLED = 'never-autofilled';
-const AUTOFILLED_THEN_FIXED = 'autofilled-then-fixed';
+const AUTOFILLED_THEN_MODIFIED = 'autofilled-then-modified';
 
 // Global variable storing autofill statuses for each field
 const autofillStatuses = {};
 // Example: {
 //     "name": "autofilled",
 //     "street-address": "never-autofilled",
-//     "country": "autofilled-then-fixed"
+//     "country": "autofilled-then-modified"
 // }
 
 // Update autofill status
-function initializeChangeObserver(formEl) {
-  const allFieldsAsArray = Array.from(formEl.querySelectorAll('input, select'));
+function initializeChangeObserver(formElement) {
+  const allFieldsAsArray = Array.from(
+    formElement.querySelectorAll('input, select')
+  );
   // Intialize autofill status for all fields
-  allFieldsAsArray.forEach((fieldEl) => {
-    autofillStatuses[fieldEl.id] = NEVER_AUTOFILLED;
+  allFieldsAsArray.forEach((fieldElement) => {
+    autofillStatuses[fieldElement.id] = NEVER_AUTOFILLED;
   });
   // Add event listener to all fields to update autofill status
-  allFieldsAsArray.forEach((fieldEl) => {
-    fieldEl.addEventListener('change', function (event) {
-      updateAutofillStatus(formEl, fieldEl);
+  allFieldsAsArray.forEach((fieldElement) => {
+    fieldElement.addEventListener('change', function (event) {
+      updateAutofillStatus(formElement, fieldElement);
     });
   });
 }
 
 // Get all elements that are autofilled, using the :autofill pseudo-class
-function getAllAutofilledFields(formEl) {
-  return formEl.querySelectorAll(':autofill');
+function getAllAutofilledFields(formElement) {
+  return formElement.querySelectorAll(':autofill');
 }
 
 // Check if the passed element is in the list of autofilled fields
-function checkIsAutofilled(allAutofilledFields, fieldEl) {
-  return Array.from(allAutofilledFields).includes(fieldEl);
+function checkIsAutofilled(allAutofilledFields, fieldElement) {
+  return Array.from(allAutofilledFields).includes(fieldElement);
 }
 
-function updateAutofillStatus(formEl, fieldEl) {
-  const allAutofilledFields = getAllAutofilledFields(formEl);
-  const isAutofilled = checkIsAutofilled(allAutofilledFields, fieldEl);
-  const previousAutofillStatus = autofillStatuses[fieldEl.id];
+function updateAutofillStatus(formElement, fieldElement) {
+  const allAutofilledFields = getAllAutofilledFields(formElement);
+  const isAutofilled = checkIsAutofilled(allAutofilledFields, fieldElement);
+  const previousAutofillStatus = autofillStatuses[fieldElement.id];
   if (isAutofilled) {
-    autofillStatuses[fieldEl.id] = AUTOFILLED;
+    autofillStatuses[fieldElement.id] = AUTOFILLED;
   } else {
     if (previousAutofillStatus === NEVER_AUTOFILLED) {
-      autofillStatuses[fieldEl.id] = NEVER_AUTOFILLED;
+      autofillStatuses[fieldElement.id] = NEVER_AUTOFILLED;
     } else if (
       previousAutofillStatus === AUTOFILLED ||
-      previousAutofillStatus === AUTOFILLED_THEN_FIXED
+      previousAutofillStatus === AUTOFILLED_THEN_MODIFIED
     ) {
-      autofillStatuses[fieldEl.id] = AUTOFILLED_THEN_FIXED;
+      autofillStatuses[fieldElement.id] = AUTOFILLED_THEN_MODIFIED;
     }
   }
 }
@@ -76,7 +78,7 @@ function formatAutofillStatusesAsHtml(autofillStatuses) {
   let outputAsHtml = '';
   const autofillStatusFormattedAsHtml = {
     [AUTOFILLED]: `<span class="positive">✅ Autofilled</span>`,
-    [AUTOFILLED_THEN_FIXED]: `<span class="negative">🖊️ Autofilled then fixed manually</span>`,
+    [AUTOFILLED_THEN_MODIFIED]: `<span class="negative">🖊️ Autofilled then manually modified</span>`,
     [NEVER_AUTOFILLED]: `<span class="neutral">⚫️ Never autofilled</span>`,
   };
   Object.entries(autofillStatuses).forEach(([elId, autofillStatus]) => {
