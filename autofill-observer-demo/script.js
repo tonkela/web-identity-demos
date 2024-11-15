@@ -16,15 +16,16 @@
 
 // Possible values for autofill statuses
 const AUTOFILLED = 'autofilled';
-const NEVER_AUTOFILLED = 'never-autofilled';
 const AUTOFILLED_THEN_MODIFIED = 'autofilled-then-modified';
+const EMPTY = 'empty';
+const ONLY_TYPED = 'only-typed';
 
 // Global variable storing autofill statuses for each field
 const autofillStatuses = {};
 // Example: {
 //     "name": "autofilled",
-//     "street-address": "never-autofilled",
-//     "country": "autofilled-then-modified"
+//     "street-address": "autofilled-then-modified",
+//     "country": "only-typed"
 // }
 
 // Update autofill status
@@ -34,11 +35,11 @@ function initializeChangeObserver(formElement) {
   );
   // Intialize autofill status for all fields
   allFieldsAsArray.forEach((fieldElement) => {
-    autofillStatuses[fieldElement.id] = NEVER_AUTOFILLED;
+    autofillStatuses[fieldElement.id] = EMPTY;
   });
   // Add event listener to all fields to update autofill status
   allFieldsAsArray.forEach((fieldElement) => {
-    fieldElement.addEventListener('change', function (event) {
+    fieldElement.addEventListener('change', () => {
       updateAutofillStatus(formElement, fieldElement);
     });
   });
@@ -49,25 +50,48 @@ function getAllAutofilledFields(formElement) {
   return formElement.querySelectorAll(':autofill');
 }
 
-// Check if the passed element is in the list of autofilled fields
+// Check if the element is in the list of autofilled fields
 function checkIsAutofilled(allAutofilledFields, fieldElement) {
   return Array.from(allAutofilledFields).includes(fieldElement);
 }
 
+// Check if the value of the element is empty
+function checkIsEmpty(fieldElement) {
+  const value = fieldElement.value.trim();
+  // value is a string, even for a type = number
+  const isEmpty = value === '';
+  return isEmpty;
+}
+
 function updateAutofillStatus(formElement, fieldElement) {
+  const isEmpty = checkIsEmpty(fieldElement);
   const allAutofilledFields = getAllAutofilledFields(formElement);
   const isAutofilled = checkIsAutofilled(allAutofilledFields, fieldElement);
   const previousAutofillStatus = autofillStatuses[fieldElement.id];
-  if (isAutofilled) {
-    autofillStatuses[fieldElement.id] = AUTOFILLED;
+  if (isEmpty) {
+    if (isAutofilled) {
+      // NOTE: Emptied by autofill
+      autofillStatuses[fieldElement.id] = AUTOFILLED;
+    } else {
+      autofillStatuses[fieldElement.id] = EMPTY;
+      // NOTE: if (previousAutofillStatus === AUTOFILLED), the field was just emptied manually
+    }
   } else {
-    if (previousAutofillStatus === NEVER_AUTOFILLED) {
-      autofillStatuses[fieldElement.id] = NEVER_AUTOFILLED;
-    } else if (
-      previousAutofillStatus === AUTOFILLED ||
-      previousAutofillStatus === AUTOFILLED_THEN_MODIFIED
-    ) {
-      autofillStatuses[fieldElement.id] = AUTOFILLED_THEN_MODIFIED;
+    if (isAutofilled) {
+      autofillStatuses[fieldElement.id] = AUTOFILLED;
+    } else {
+      if (
+        previousAutofillStatus === ONLY_TYPED ||
+        previousAutofillStatus === EMPTY
+      ) {
+        // NOTE: `only_typed` is only used for fields where autofilled was never used. A field where autofilled was used will be `autofilled_then_fixed`, even if the user has completely retyped the whole value
+        autofillStatuses[fieldElement.id] = ONLY_TYPED;
+      } else if (
+        previousAutofillStatus === AUTOFILLED ||
+        previousAutofillStatus === AUTOFILLED_THEN_MODIFIED
+      ) {
+        autofillStatuses[fieldElement.id] = AUTOFILLED_THEN_MODIFIED;
+      }
     }
   }
 }
@@ -77,9 +101,10 @@ function updateAutofillStatus(formElement, fieldElement) {
 function formatAutofillStatusesAsHtml(autofillStatuses) {
   let outputAsHtml = '';
   const autofillStatusFormattedAsHtml = {
-    [AUTOFILLED]: `<span class="positive">✅ Autofilled</span>`,
-    [AUTOFILLED_THEN_MODIFIED]: `<span class="negative">🖊️ Autofilled then manually modified</span>`,
-    [NEVER_AUTOFILLED]: `<span class="neutral">⚫️ Never autofilled</span>`,
+    [AUTOFILLED]: `<span class="autofilled">✅ Autofilled</span>`,
+    [AUTOFILLED_THEN_MODIFIED]: `<span class="autofilled-then-modified">🖊️ Autofilled then manually modified</span>`,
+    [ONLY_TYPED]: `<span class="only-typed">🖊️ Only typed</span>`,
+    [EMPTY]: `<span class="empty">⚫️ Empty</span>`,
   };
   Object.entries(autofillStatuses).forEach(([elId, autofillStatus]) => {
     const output = `<div class="output-wrapper"><div class="element-id">${elId}</div><div>${autofillStatusFormattedAsHtml[autofillStatus]}</div></div>`;
