@@ -28,16 +28,22 @@ const autofillStatuses = {};
 //     "country": "only-manual"
 // }
 
-// Update autofill status
-function initializeChangeObserver(formElement) {
-  const allFieldsAsArray = Array.from(
-    formElement.querySelectorAll('input, select')
-  );
-  // Intialize autofill status for all fields
+// Collect all field elements for a given form
+function getAllFieldsAsArray(formElement) {
+  return Array.from(formElement.querySelectorAll('input, select'));
+}
+
+// Initialize autofill status for all fields
+function initializeAutofillStatuses(formElement) {
+  const allFieldsAsArray = getAllFieldsAsArray(formElement);
   allFieldsAsArray.forEach((fieldElement) => {
     autofillStatuses[fieldElement.id] = EMPTY;
   });
-  // Add event listener to all fields to update autofill status
+}
+
+// Add event listener to all fields to update autofill status
+function initializeChangeObserver(formElement) {
+  const allFieldsAsArray = getAllFieldsAsArray(formElement);
   allFieldsAsArray.forEach((fieldElement) => {
     fieldElement.addEventListener('change', () => {
       updateAutofillStatus(formElement, fieldElement);
@@ -58,11 +64,12 @@ function checkIsAutofilled(allAutofilledFields, fieldElement) {
 // Check if the value of the element is empty
 function checkIsEmpty(fieldElement) {
   const value = fieldElement.value.trim();
-  // value is a string, even for a type = number
+  // value is a string, even for a type = number field
   const isEmpty = value === '';
   return isEmpty;
 }
 
+// Update autofill status
 function updateAutofillStatus(formElement, fieldElement) {
   const isEmpty = checkIsEmpty(fieldElement);
   const allAutofilledFields = getAllAutofilledFields(formElement);
@@ -74,7 +81,7 @@ function updateAutofillStatus(formElement, fieldElement) {
       autofillStatuses[fieldElement.id] = AUTOFILLED;
     } else {
       autofillStatuses[fieldElement.id] = EMPTY;
-      // NOTE: if (previousAutofillStatus === AUTOFILLED), the field was just emptied manually
+      // NOTE: if (previousAutofillStatus === AUTOFILLED), the field has just been emptied manually
     }
   } else {
     if (isAutofilled) {
@@ -123,6 +130,7 @@ function submitForm(e) {
 
 // ------------------------- MAIN ---------------------- //
 
+initializeAutofillStatuses(document.getElementById('form'));
 initializeChangeObserver(document.getElementById('form'));
 
 window.submitForm = submitForm;
