@@ -15,30 +15,37 @@
 // ----------------------------- AUTOFILL LOGIC ----------------------------- //
 
 // Possible values for autofill statuses
+const EMPTY = 'empty';
 const AUTOFILLED = 'autofilled';
-const NEVER_AUTOFILLED = 'never-autofilled';
 const AUTOFILLED_THEN_MODIFIED = 'autofilled-then-modified';
+const ONLY_MANUAL = 'only-manual';
 
 // Global variable storing autofill statuses for each field
 const autofillStatuses = {};
 // Example: {
 //     "name": "autofilled",
-//     "street-address": "never-autofilled",
-//     "country": "autofilled-then-modified"
+//     "street-address": "autofilled-then-modified",
+//     "country": "only-manual"
 // }
 
-// Update autofill status
-function initializeChangeObserver(formElement) {
-  const allFieldsAsArray = Array.from(
-    formElement.querySelectorAll('input, select')
-  );
-  // Intialize autofill status for all fields
+// Collect all field elements for a given form
+function getAllFieldsAsArray(formElement) {
+  return Array.from(formElement.querySelectorAll('input, select'));
+}
+
+// Initialize autofill status for all fields
+function initializeAutofillStatuses(formElement) {
+  const allFieldsAsArray = getAllFieldsAsArray(formElement);
   allFieldsAsArray.forEach((fieldElement) => {
-    autofillStatuses[fieldElement.id] = NEVER_AUTOFILLED;
+    autofillStatuses[fieldElement.id] = EMPTY;
   });
-  // Add event listener to all fields to update autofill status
+}
+
+// Add event listener to all fields to update autofill status
+function initializeChangeObserver(formElement) {
+  const allFieldsAsArray = getAllFieldsAsArray(formElement);
   allFieldsAsArray.forEach((fieldElement) => {
-    fieldElement.addEventListener('change', function (event) {
+    fieldElement.addEventListener('change', () => {
       updateAutofillStatus(formElement, fieldElement);
     });
   });
@@ -49,25 +56,44 @@ function getAllAutofilledFields(formElement) {
   return formElement.querySelectorAll(':autofill');
 }
 
-// Check if the passed element is in the list of autofilled fields
+// Check if the element is in the list of autofilled fields
 function checkIsAutofilled(allAutofilledFields, fieldElement) {
   return Array.from(allAutofilledFields).includes(fieldElement);
 }
 
+// Check if the value of the element is empty
+function checkIsEmpty(fieldElement) {
+  const value = fieldElement.value.trim();
+  // value is a string, even for a type = number field
+  const isEmpty = value === '';
+  return isEmpty;
+}
+
+// Update autofill status
 function updateAutofillStatus(formElement, fieldElement) {
+  const isEmpty = checkIsEmpty(fieldElement);
   const allAutofilledFields = getAllAutofilledFields(formElement);
   const isAutofilled = checkIsAutofilled(allAutofilledFields, fieldElement);
   const previousAutofillStatus = autofillStatuses[fieldElement.id];
-  if (isAutofilled) {
-    autofillStatuses[fieldElement.id] = AUTOFILLED;
+  if (isEmpty) {
+    autofillStatuses[fieldElement.id] = EMPTY;
+    // NOTE: if (previousAutofillStatus === AUTOFILLED), the field has just been emptied manually. Autofill can't empty fields.
   } else {
-    if (previousAutofillStatus === NEVER_AUTOFILLED) {
-      autofillStatuses[fieldElement.id] = NEVER_AUTOFILLED;
-    } else if (
-      previousAutofillStatus === AUTOFILLED ||
-      previousAutofillStatus === AUTOFILLED_THEN_MODIFIED
-    ) {
-      autofillStatuses[fieldElement.id] = AUTOFILLED_THEN_MODIFIED;
+    if (isAutofilled) {
+      autofillStatuses[fieldElement.id] = AUTOFILLED;
+    } else {
+      if (
+        previousAutofillStatus === ONLY_MANUAL ||
+        previousAutofillStatus === EMPTY
+      ) {
+        // NOTE: ONLY_MANUAL is only used for fields where autofilled was *never* used. A field where autofilled was used will be AUTOFILLED_THEN_MODIFIED, even if the user has completely retyped the whole value
+        autofillStatuses[fieldElement.id] = ONLY_MANUAL;
+      } else if (
+        previousAutofillStatus === AUTOFILLED ||
+        previousAutofillStatus === AUTOFILLED_THEN_MODIFIED
+      ) {
+        autofillStatuses[fieldElement.id] = AUTOFILLED_THEN_MODIFIED;
+      }
     }
   }
 }
@@ -77,9 +103,10 @@ function updateAutofillStatus(formElement, fieldElement) {
 function formatAutofillStatusesAsHtml(autofillStatuses) {
   let outputAsHtml = '';
   const autofillStatusFormattedAsHtml = {
-    [AUTOFILLED]: `<span class="positive">✅ Autofilled</span>`,
-    [AUTOFILLED_THEN_MODIFIED]: `<span class="negative">🖊️ Autofilled then manually modified</span>`,
-    [NEVER_AUTOFILLED]: `<span class="neutral">⚫️ Never autofilled</span>`,
+    [AUTOFILLED]: `<span class="autofilled">✅ Autofilled</span>`,
+    [AUTOFILLED_THEN_MODIFIED]: `<span class="autofilled-then-modified">🖊️ Autofilled then manually modified</span>`,
+    [ONLY_MANUAL]: `<span class="only-manual">🖊️ Filled only manually</span>`,
+    [EMPTY]: `<span class="empty">⚫️ Empty</span>`,
   };
   Object.entries(autofillStatuses).forEach(([elId, autofillStatus]) => {
     const output = `<div class="output-wrapper"><div class="element-id">${elId}</div><div>${autofillStatusFormattedAsHtml[autofillStatus]}</div></div>`;
@@ -98,6 +125,7 @@ function submitForm(e) {
 
 // ------------------------- MAIN ---------------------- //
 
+initializeAutofillStatuses(document.getElementById('form'));
 initializeChangeObserver(document.getElementById('form'));
 
 window.submitForm = submitForm;

@@ -25,7 +25,7 @@ body {
 
 main {
   margin: 0 auto;
-  max-width: 26rem;
+  max-width: 27rem;
 }
 
 .demo-metadata {
@@ -142,14 +142,18 @@ button[type='submit'] {
   }
 }
 
-.positive {
+.autofilled {
   color: green;
 }
 
-.negative {
+.autofilled-then-modified {
+  color: blue;
+}
+
+.only-manual {
   color: red;
 }
 
-.neutral {
-  color: inherit;
+.empty {
+  color: rgb(56, 56, 56);
 }
