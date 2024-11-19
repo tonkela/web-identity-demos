@@ -15,9 +15,9 @@
 // ----------------------------- AUTOFILL LOGIC ----------------------------- //
 
 // Possible values for autofill statuses
+const EMPTY = 'empty';
 const AUTOFILLED = 'autofilled';
 const AUTOFILLED_THEN_MODIFIED = 'autofilled-then-modified';
-const EMPTY = 'empty';
 const ONLY_MANUAL = 'only-manual';
 
 // Global variable storing autofill statuses for each field
