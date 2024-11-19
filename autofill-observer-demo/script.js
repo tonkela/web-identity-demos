@@ -76,13 +76,8 @@ function updateAutofillStatus(formElement, fieldElement) {
   const isAutofilled = checkIsAutofilled(allAutofilledFields, fieldElement);
   const previousAutofillStatus = autofillStatuses[fieldElement.id];
   if (isEmpty) {
-    if (isAutofilled) {
-      // NOTE: Emptied by autofill
-      autofillStatuses[fieldElement.id] = AUTOFILLED;
-    } else {
-      autofillStatuses[fieldElement.id] = EMPTY;
-      // NOTE: if (previousAutofillStatus === AUTOFILLED), the field has just been emptied manually
-    }
+    autofillStatuses[fieldElement.id] = EMPTY;
+    // NOTE: if (previousAutofillStatus === AUTOFILLED), the field has just been emptied manually. Autofill can't empty fields.
   } else {
     if (isAutofilled) {
       autofillStatuses[fieldElement.id] = AUTOFILLED;
