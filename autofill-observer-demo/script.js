@@ -18,14 +18,14 @@
 const AUTOFILLED = 'autofilled';
 const AUTOFILLED_THEN_MODIFIED = 'autofilled-then-modified';
 const EMPTY = 'empty';
-const ONLY_TYPED = 'only-typed';
+const ONLY_MANUAL = 'only-manual';
 
 // Global variable storing autofill statuses for each field
 const autofillStatuses = {};
 // Example: {
 //     "name": "autofilled",
 //     "street-address": "autofilled-then-modified",
-//     "country": "only-typed"
+//     "country": "only-manual"
 // }
 
 // Update autofill status
@@ -81,11 +81,11 @@ function updateAutofillStatus(formElement, fieldElement) {
       autofillStatuses[fieldElement.id] = AUTOFILLED;
     } else {
       if (
-        previousAutofillStatus === ONLY_TYPED ||
+        previousAutofillStatus === ONLY_MANUAL ||
         previousAutofillStatus === EMPTY
       ) {
-        // NOTE: `only_typed` is only used for fields where autofilled was never used. A field where autofilled was used will be `autofilled_then_fixed`, even if the user has completely retyped the whole value
-        autofillStatuses[fieldElement.id] = ONLY_TYPED;
+        // NOTE: ONLY_MANUAL is only used for fields where autofilled was *never* used. A field where autofilled was used will be AUTOFILLED_THEN_MODIFIED, even if the user has completely retyped the whole value
+        autofillStatuses[fieldElement.id] = ONLY_MANUAL;
       } else if (
         previousAutofillStatus === AUTOFILLED ||
         previousAutofillStatus === AUTOFILLED_THEN_MODIFIED
@@ -103,7 +103,7 @@ function formatAutofillStatusesAsHtml(autofillStatuses) {
   const autofillStatusFormattedAsHtml = {
     [AUTOFILLED]: `<span class="autofilled">✅ Autofilled</span>`,
     [AUTOFILLED_THEN_MODIFIED]: `<span class="autofilled-then-modified">🖊️ Autofilled then manually modified</span>`,
-    [ONLY_TYPED]: `<span class="only-typed">🖊️ Only typed</span>`,
+    [ONLY_MANUAL]: `<span class="only-manual">🖊️ Filled only manually</span>`,
     [EMPTY]: `<span class="empty">⚫️ Empty</span>`,
   };
   Object.entries(autofillStatuses).forEach(([elId, autofillStatus]) => {
