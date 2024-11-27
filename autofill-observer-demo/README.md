@@ -3,7 +3,7 @@
 This demo showcases how you can programmatically determine whether a user has used browser autofill to fill form fields, or whether the user has manually filled the field.
 
 <p align="center">
-  <img src="https://github.com/user-attachments/assets/b6ef89a1-76f3-44c7-acfb-40f01d6901c2" width="400"/>
+  <img src="https://github.com/user-attachments/assets/6deaeb1b-ff65-4537-ad5c-5fdb56f856fd" width="400"/>
 </p>
 
 ## Try it
