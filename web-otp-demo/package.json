@@ -1,0 +1,42 @@
+{
+  "name": "web-otp-demo",
+  "version": "0.0.1",
+  "description": "A demo of SMS Receiver API.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "build": "webpack -p",
+    "deploy": "npm run build && gcloud functions deploy web-otp-demo --project web-devrel-apps --runtime nodejs20 --trigger-http"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "twilio": "^4.23.0",
+    "hbs": "^4.2.0",
+    "request": "^2.88.2",
+    "@material/mwc-button": "^0.27.0",
+    "@material/mwc-textfield": "^0.27.0",
+    "@material/mwc-icon-button": "^0.27.0",
+    "@material/mwc-top-app-bar-fixed": "^0.27.0",
+    "@material/mwc-linear-progress": "^0.27.0",
+    "@material/mwc-snackbar": "^0.27.0"
+  },
+  "devDependencies": {
+    "webpack": "^4.47.0",
+    "@babel/core": "^7.27.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-loader": "^8.4.1",
+    "webpack-cli": "^3.3.12"
+  },
+  "engines": {
+    "node": "10.x"
+  },
+  "repository": {
+    "url": "https://glitch.com/edit/#!/sms-receiver-demo"
+  },
+  "license": "MIT",
+  "keywords": [
+    "node",
+    "glitch",
+    "express"
+  ]
+}

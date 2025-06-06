@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Web OTP API Demo</title>
+    <meta name="description" content="A cool thing made with Glitch">
+    <link id="favicon" rel="icon" href="https://glitch.com/edit/favicon-app.ico" type="image/x-icon">
+    <link rel="manifest" href="/manifest.json">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://unpkg.com/material-components-web@3.1.1/dist/material-components-web.min.css">
+    <script src="https://unpkg.com/material-components-web@3.1.1/dist/material-components-web.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/style.css">
+    <script src="/components-bundle.js" type="module"></script>
+  </head>
+  <body class="mdc-typography">
+    <mwc-top-app-bar-fixed>
+      <div slot="title">Web OTP API Demo</div>
+      <mwc-icon-button id="install" class="invisible" icon="add_to_home_screen" slot="actionItems"></mwc-icon-button>
+      <mwc-linear-progress id="progress"></mwc-linear-progress>
+    </mwc-top-app-bar-fixed>
+    <main class="content">
+      <form id="success" class="mdc-form-field">
+        <h2>
+          You are successfully signed in!
+        </h2>
+        <mwc-button id="back">Start over</mwc-button>
+      </form>
+    </main>
+    <mwc-snackbar id="snackbar"></mwc-snackbar>
+    <script src="/result.js" defer></script>
+  </body>
+</html>
